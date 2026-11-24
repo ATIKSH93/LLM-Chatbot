@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     # LLM configuration
     LLM_API_KEYS: str
-    LLM_MODEL: str = "gemini/gemini-3.8-flash"
+    LLM_MODEL: str = "groq/openai/gpt-oss-120b"
 
     # Database configuration
     DATABASE_URL: str = "sqlite:///./app.db"

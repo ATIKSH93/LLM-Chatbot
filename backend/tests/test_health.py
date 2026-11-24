@@ -17,4 +17,4 @@ def test_health_endpoint():
 
     assert data["status"] == "ok"
     assert data["keys_configured"] >= 2
-    assert data["cache_enabled"] is False
+    assert data["cache_enabled"] is True

@@ -1,6 +1,5 @@
 
 from contextlib import asynccontextmanager
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -10,7 +9,7 @@ from app.db.database import Base, engine
 # Import models before create_all so SQLAlchemy registers them.
 from app.db import models
 
-from app.api import health, sessions
+from app.api import health, sessions, chat
 
 
 @asynccontextmanager
@@ -32,6 +31,7 @@ app = FastAPI(
 )
 
 
+
 # Configure frontend-backend communication.
 app.add_middleware(
     CORSMiddleware,
@@ -42,10 +42,11 @@ app.add_middleware(
 )
 
 
+
 # Register API routers.
 app.include_router(health.router)
 app.include_router(sessions.router)
-
+app.include_router(chat.router)
 
 @app.get("/")
 def root():

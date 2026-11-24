@@ -35,6 +35,38 @@ class MessageRepository:
         return message
 
     @staticmethod
+    def create_turn(
+        db: Session,
+        session_id: str,
+        user_content: str,
+        assistant_content: str,
+        metadata: dict,
+    ) -> None:
+
+        try:
+            db.add_all(
+                [
+                    Message(
+                        session_id=session_id,
+                        role="user",
+                        content=user_content,
+                    ),
+                    Message(
+                        session_id=session_id,
+                        role="assistant",
+                        content=assistant_content,
+                        metadata_json=json.dumps(metadata),
+                    ),
+                ]
+            )
+
+            db.commit()
+
+        except Exception:
+            db.rollback()
+            raise
+
+    @staticmethod
     def get_session_messages(
         db: Session,
         session_id: str,

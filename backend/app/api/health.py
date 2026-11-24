@@ -35,5 +35,5 @@ def health_check(db: Session = Depends(get_db)):
     return {
         "status": "ok",
         "keys_configured": keys_configured,
-        "cache_enabled": False
+        "cache_enabled": True
     }
