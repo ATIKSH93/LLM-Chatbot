@@ -1,40 +1,196 @@
-#AI Chatbot
+# AI Chatbot
 
-A React and FastAPI chatbot. The frontend sends each new message to the backend; the backend assembles session history, calls the configured LiteLLM model, and stores successful turns in SQLite.
+A full-stack conversational AI application built with React, FastAPI, LiteLLM, and SQLite. The application supports multi-turn conversations, LLM API key failover, response caching, session history persistence, and request-level usage metadata.
 
-## Project layout
+## Live Application
 
-- `backend/` — FastAPI routes, LiteLLM service, SQLAlchemy models/repository, and pytest suite.
-- `frontend/` — React/Vite chat interface and its API client.
-- `.env.example` — backend environment template.
-- `frontend/.env.example` — frontend API URL template.
-- `backend/docs/api_contract.md` — endpoint and response contract.
-- `my-docs/` — local project handoffs; this directory is intentionally ignored by Git.
+| Component | URL |
+|---|---|
+| Frontend | https://llm-chatbot-flax.vercel.app |
+| Backend API | https://llm-chatbot-production-90e558b6.up.railway.app |
+| Health Check | https://llm-chatbot-production-90e558b6.up.railway.app/health |
 
-## Requirements
+## Features
 
-- Python 3.10 or newer, with the backend requirements installed.
-- Node.js and npm, with the frontend dependencies installed using `npm ci` from `frontend/`.
-- Two or more API keys for the configured LLM provider to pass the health check and exercise provider fallback.
+- **Conversational Chat Interface:** React-based interface supporting multi-turn conversations and session management.
+- **Session Persistence:** Conversation history is stored in SQLite and can be retrieved using a session ID.
+- **LLM Integration:** LiteLLM provides a unified interface for interacting with configured language models.
+- **API Key Failover:** Supports multiple LLM API keys and automatic fallback when configured provider requests encounter eligible failures.
+- **Response Caching:** Uses LiteLLM's built-in caching to avoid repeated inference for matching requests.
+- **Response Metadata:** Displays model information, resolution source, latency, and input/output token usage.
+- **Failure Simulation:** Supports request-level failure simulation through the `X-Simulate-Failure` header when enabled.
+- **Containerization:** Dockerfiles and Docker Compose configuration support local containerized execution.
 
-## Local setup
+## Technology Stack
 
-1. Copy `.env.example` to `.env` and set `LLM_API_KEYS` locally. Keep real credentials out of source control.
-2. Install backend dependencies from `backend/` with `python -m pip install -r requirements.txt`.
-3. Start the backend from `backend/` with `python -m uvicorn app.main:app --host 0.0.0.0 --port 8000`.
-4. Copy `frontend/.env.example` to `frontend/.env` if the backend is not at the default URL.
-5. From `frontend/`, run `npm ci` and `npm run dev`.
+| Layer | Technology |
+|---|---|
+| Frontend | React, Vite, JavaScript |
+| Styling | Tailwind CSS |
+| Backend | Python, FastAPI |
+| LLM Integration | LiteLLM |
+| Database | SQLite |
+| ORM | SQLAlchemy |
+| Testing | Pytest |
+| Frontend Testing | ESLint, custom integration test |
+| Containerization | Docker, Docker Compose |
+| Frontend Deployment | Vercel |
+| Backend Deployment | Railway |
 
-The default backend database is `sqlite:///./app.db`. Set `DATABASE_URL` to another SQLAlchemy URL when needed; for a future container volume the intended SQLite URL is `sqlite:////data/app.db`. The backend creates its schema at startup. `ALLOWED_ORIGINS` accepts a comma-separated list of browser origins. `ENABLE_FAILURE_SIMULATION` controls the request-scoped `X-Simulate-Failure` test header.
+## Project Structure
 
-## Verification
+```text
+ai-chatbot/
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   ├── core/
+│   │   ├── models/
+│   │   ├── repositories/
+│   │   └── services/
+│   ├── tests/
+│   ├── Dockerfile
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   └── services/
+│   ├── Dockerfile
+│   ├── package.json
+│   └── package-lock.json
+│
+├── .env.example
+├── .gitignore
+├── docker-compose.yml
+├── Makefile
+└── README.md
+```
 
-From `backend/`, run `python -m pytest -q`.
+## Getting Started
 
-From `frontend/`, run `npm run lint`, `npm run build`, and `node test_phase4.mjs`.
+### Prerequisites
 
-The automated backend tests mock model completions. The frontend integration script uses a local mock server. Neither command verifies live provider credentials.
+- Python 3.10 or newer
+- Node.js and npm
+- Docker and Docker Compose (for containerized execution)
+- At least two valid API keys for the configured LLM provider
 
-## Current phase
+### 1. Clone the repository
 
-Phases 1–4 are implemented. Docker packaging, deployment, and public deployment URLs have not been added or claimed here.
+```bash
+git clone <YOUR_GITHUB_REPOSITORY_URL>
+cd ai-chatbot
+```
+
+### 2. Environment configuration
+
+Copy the backend environment template:
+
+```bash
+cp .env.example .env
+```
+
+On Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Configure the required environment variables:
+
+```env
+LLM_API_KEYS=<your-api-keys>
+DATABASE_URL=sqlite:///./app.db
+ALLOWED_ORIGINS=http://localhost:3000
+ENABLE_FAILURE_SIMULATION=true
+```
+
+Use the exact API key format documented in `.env.example`.
+
+Never commit real API keys or other secrets.
+
+### 3. Run without Docker
+
+**Backend**
+
+```bash
+cd backend
+python -m pip install -r requirements.txt
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+The backend will be available at:
+
+```text
+http://localhost:8000
+```
+
+**Frontend**
+
+Open a second terminal:
+
+```bash
+cd frontend
+npm ci
+```
+
+Copy the frontend environment template:
+
+```bash
+cp .env.example .env
+```
+
+Configure the backend URL:
+
+```env
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+The frontend will be available at the Vite development URL shown in the terminal.
+
+### 4. Run with Docker Compose
+
+From the repository root, configure the required backend environment variables in `.env`.
+
+Build and start the application:
+
+```bash
+make up
+```
+
+This starts the frontend and backend using Docker Compose.
+
+Expected local endpoints:
+
+| Component | URL |
+|---|---|
+| Frontend | http://localhost:3000 |
+| Backend | http://localhost:8000 |
+| Health Check | http://localhost:8000/health |
+
+To stop the application:
+
+```bash
+make down
+```
+
+The SQLite database uses a Docker named volume mounted at `/data`.
+
+The containerized database configuration is:
+
+```env
+DATABASE_URL=sqlite:////data/app.db
+```
+
+The named volume allows database files to persist across container restarts.
+
+## API Endpoints
+
