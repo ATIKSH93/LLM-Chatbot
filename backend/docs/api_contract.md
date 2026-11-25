@@ -34,7 +34,7 @@ Response: 200
   "reply": "The capital of France is Paris.",
   "metadata": {
     "resolution_source": "LIVE_INFERENCE",
-    "model": "gemini/gemini-3.8-flash",
+    "model": "openai/gpt-oss-120b",
     "latency_ms": 812,
     "input_tokens": 42,
     "output_tokens": 9,
@@ -99,10 +99,13 @@ Expected:
 ## Cache Behaviour
 
 - Cache key = model + complete LLM message list.
+- LiteLLM's router cache is used for normal chat requests; failure-simulation requests bypass it.
 - Identical first message across sessions should hit cache.
 - Cache hit returns identical reply.
 - resolution_source = LLM_CACHE.
-- key_id = null on cache hits.
+- key_id = null and fallback_attempts = 0 on cache hits.
+- Live responses report resolution_source = LIVE_INFERENCE and identify the selected key when LiteLLM provides it.
+- The model field in the response is the model value returned by LiteLLM (the configured router model is `groq/openai/gpt-oss-120b`).
 
 ## Session Behaviour
 

@@ -24,8 +24,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Lyftr AI Chatbot API",
-    description="Backend for the Lyftr full-stack assignment.",
+    title="AI Chatbot API",
+    description="Backend API for the AI chatbot.",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -51,5 +51,5 @@ app.include_router(chat.router)
 @app.get("/")
 def root():
     return {
-        "message": "Lyftr AI Chatbot API is running"
+        "message": "AI Chatbot API is running"
     }

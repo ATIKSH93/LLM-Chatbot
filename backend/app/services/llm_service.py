@@ -3,7 +3,7 @@ from litellm import Router
 
 from app.core.config import settings
 
-MODEL_GROUP = "lyftr-chat"
+MODEL_GROUP = "chat-completion"
 
 
 def build_model_list(only_key: str | None = None) -> list[dict]:
