@@ -28,3 +28,8 @@ Thumbs.db
 
 # Private project notes and handoffs
 my-docs/
+
+# Frontend environment variables
+frontend/.env
+frontend/.env.*
+!frontend/.env.example

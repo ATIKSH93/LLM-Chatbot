@@ -86,7 +86,7 @@ function App() {
         <div>
           <h1 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <span className="inline-block w-3 h-3 rounded-full bg-blue-600"></span>
-            Lyftr AI Chatbot
+            AI Chatbot
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400">
             Phase 4 — Frontend Client
